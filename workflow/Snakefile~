@@ -1,0 +1,142 @@
+configfile: "config/config.yaml"
+    
+rule all:
+    input:
+        # expand('results/{sample}_{db}_dom_adapted.tbl', sample=config["sample_name"], db=config['databases'])
+        expand('results/{sample}_prediction_results.tsv',
+               sample=config["sample_name"])
+
+rule hmmsearch:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "results/{sample_name}_{db}_dom.tbl",
+        "results/{sample_name}_{db}_dom.out"
+    conda:
+        "envs/main_env.yaml"
+    params:
+        db="{db}"
+    shell:
+        "hmmsearch --domtblout {output[0]} resources/{params.db}_dom_hmms.hmm {input[0]} > {output[1]}"
+
+rule adapt_hmm_results:
+    input:
+        "results/{sample_name}_{db}_dom.tbl"
+    output:
+        "results/{sample_name}_{db}_dom_adapted.tbl"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/make_out_readable.py"
+
+rule treks:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "results/{sample_name}_treks.tsv",
+        "results/{sample_name}_treks.aln"
+    conda:
+        "envs/main_env.yaml"
+    log:
+        "results/{sample_name}_treks.log"
+    shell:
+        "java -Xmx4G -jar scripts/T-ReksHPC.jar -f {input} -t {output[0]} "
+        "-a {output[1]} -m muscle -s 0.7 -S 5 -L 50 > {log}"
+
+rule inmembrane:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "{sample_name}.csv",
+        directory("{sample_name}/")
+    conda:
+        "envs/inmembrane_env.yaml"
+    shell:
+        "inmembrane_scan {input[0]}"
+
+rule inmembrane_adapt:
+    input:
+        "{sample_name}.csv",
+        directory("{sample_name}/")
+    output:
+        "results/{sample_name}_PSE_cellwall.csv",
+        "results/{sample_name}_PSE_membrane.csv"
+    conda:
+        "envs/main_env.yaml"
+    run:
+        shell("grep 'PSE-Cellwall' {input[0]} | cut -d, -f1 > {output[0]}")
+        shell("grep 'PSE-Membrane' {input[0]} || true | cut -d, -f1 > {output[1]}")
+        shell("mv {input[0]} results/")
+        shell("rm -r {input[1]}")
+
+        
+rule hydro_charge:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "results/{sample_name}_charge_hydro.csv"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/hydro_charge_calculat.py"
+
+rule iupred:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "results/{sample_name}_iupred.tab"
+    conda:
+        "envs/main_env.yaml"
+    shell:
+        "python3.7 scripts/iupred2a.py -d scripts/ {input} 'long' > {output[0]}"
+
+
+rule iupred_calculate:
+    input:
+        "results/{sample_name}_iupred.tab"
+    output:
+        "results/{sample_name}_iupred_feature.csv"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/iupred_feature.py"
+
+rule amino_acid_comp:
+    input:
+        "{sample_name}.fasta"
+    output:
+        "results/{sample_name}_amino_acid_comp.csv"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/amino_acid_comp.py"
+
+rule combine:
+    input:
+        "{sample_name}.fasta",
+        "results/{sample_name}_treks.tsv",
+        "results/{sample_name}_anchor_dom_adapted.tbl",
+        "results/{sample_name}_stalk_dom_adapted.tbl",
+        "results/{sample_name}_adh_dom_adapted.tbl",
+        "results/{sample_name}_PSE_cellwall.csv",
+        "results/{sample_name}_PSE_membrane.csv",
+        "results/{sample_name}_iupred_feature.csv",
+        "results/{sample_name}_charge_hydro.csv",
+        "results/{sample_name}_amino_acid_comp.csv"
+    output:
+        "results/{sample_name}_all_feature.csv"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/combine_feature.py"
+
+rule prediction:
+    input:
+        "resources/training_data.csv",
+        "results/{sample_name}_all_feature.csv"
+    output:
+        "results/{sample_name}_prediction_results.tsv"
+    conda:
+        "envs/main_env.yaml"
+    script:
+        "scripts/random_forest_prediction.py"

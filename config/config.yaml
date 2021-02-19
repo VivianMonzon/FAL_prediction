@@ -1,0 +1,9 @@
+sample_name: "test_sequence"
+
+databases:
+    adh: resources/adh_dom_hmms.hmm
+    anchor: resources/anchor_dom_hmms.hmm
+    stalk: resources/stalk_dom_hmms.hmm
+
+samples:
+    test_sequence: test_sequence.fasta
