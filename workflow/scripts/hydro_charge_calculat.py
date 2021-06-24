@@ -1,67 +1,68 @@
 #!/usr/bin/env python
-
-"""
-Calculates a set of properties from a protein sequence:
-    - hydrophobicity (according to a particular scale)
-    - total charge (at pH 7.4)
-Author:
-  Joao Rodrigues
-  j.p.g.l.m.rodrigues@gmail.com
-Adapted by:
-    Vivian Monzon
-"""
-
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 import statistics
 import pandas as pd
+import argparse
 
-Fauchere_Pliska = {'A':  0.31, 'R': -1.01, 'N': -0.60,
-                   'D': -0.77, 'C':  1.54, 'Q': -0.22,
-                   'E': -0.64, 'G':  0.00, 'H':  0.13,
-                   'I':  1.80, 'L':  1.70, 'K': -0.99,
-                   'M':  1.23, 'F':  1.79, 'P':  0.72,
-                   'S': -0.04, 'T':  0.26, 'W':  2.25,
-                   'Y':  0.96, 'V':  1.22}
-aa_charge = {'E': -1, 'D': -1, 'K': 1, 'R': 1}
-
-hydrophobic_aa = {'A': 1, 'I': 1, 'L': 1, 'M': 1, 'F':1, 'W': 1, 'Y': 1, 'V': 1}
-
-
-def hydrophobic_mean(sequence):
-    hydro_for_aa = [Fauchere_Pliska.get(aa) for aa in sequence]
-    hydro_for_aa = [x for x in hydro_for_aa if x is not None]
-    return round(statistics.mean(hydro_for_aa), 2)
+hydrophobic_aa = {'A': 1, 'I': 1, 'L': 1, 'M': 1,
+                  'F': 1, 'W': 1, 'Y': 1, 'V': 1}
 
 
 def proportion_hydro(sequence):
-    hydro_portion = [hydrophobic_aa.get(aa, 0) for aa in sequence]
-    return round(statistics.mean(hydro_portion), 2)
-
-
-def calculate_charge(sequence, charge_dict=aa_charge):
-    """Calculates the charge of the peptide sequence at pH 7.4                                                                                                                                              
+    """Calculates proportion of hydrophobic aa of protein seq
     """
-    sc_charges = [charge_dict.get(aa, 0) for aa in sequence]
-    return round(statistics.mean(sc_charges), 2)
+    hydro_portion = [hydrophobic_aa.get(aa, 0) for aa in sequence]
+    hydro_portion = round(statistics.mean(hydro_portion), 2)
+    return hydro_portion
 
 
-fh_in = open(snakemake.input[0])
-ids = []
-hydros = []
-hydro_portion = []
-charges = []
-for name, seq in SimpleFastaParser(fh_in):
-    if '|' in name:
-        name = name.split('|')[1].split('|')[0]
-    if ' ' in name:
-        name = name.split(' ')[0]
-    ids.append(name)
-    hydros.append(hydrophobic_mean(seq))
-    hydro_portion.append(proportion_hydro(seq))
-    charges.append(calculate_charge(seq))
+def proportion_charge(sequence):
+    """Calculates proportion of charged aa of protein seq
+    """
+    charged_aa = ['E', 'D', 'K', 'R']
+    seq_charged_aa = [aa for aa in sequence if aa in charged_aa]
+    charge_proportion = round(len(seq_charged_aa)/len(sequence), 2)
+    return charge_proportion
 
 
-df = pd.DataFrame({'ID': ids, 'Hydrophobicity': hydros,
-                   'Hydro_portion': hydro_portion, 'Charge': charges})
-df = df[['ID', 'Hydro_portion', 'Charge']]
-df.to_csv(snakemake.output[0], index=False)
+def read_seq_summ_results(fh_input):
+    """Reads in fasta file and splits name from seq to calculate hydro
+    and charge proportion from seq. At the end it creates a dataframe.
+    """
+    ids = []
+    hydro_portion = []
+    charge_proportion = []
+    for name, seq in SimpleFastaParser(fh_input):
+        if '|' in name:
+            name = name.split('|')[1].split('|')[0]
+        if '.' in name:
+            name = name.split('.')[0]
+        if ' ' in name:
+            name = name.split(' ')[0]
+        if name in ids:
+            raise ValueError('File contains proteins with same ID!')
+        if name == '':
+            raise ValueError('Header couldnot select ID!')
+        ids.append(name)
+        if not seq:
+            raise ValueError('Sequence is empty')
+        hydro_portion.append(proportion_hydro(seq))
+        charge_proportion.append(proportion_charge(seq))
+    df = pd.DataFrame({'ID': ids, 'Hydro_portion': hydro_portion,
+                       'Charge_portion': charge_proportion})
+    return df
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fh_in', required=True, help='Fasta file')
+    parser.add_argument('--fh_out', required=True, help='df output')
+    args = parser.parse_args()
+    seq_fh = open(args.fh_in)
+    df_out = read_seq_summ_results(seq_fh)
+    df_out.to_csv(args.fh_out, index=False)
+
+    
+# fh_in = open(snakemake.input[0])
+# df_out.to_csv(snakemake.output[0], index=False)
+

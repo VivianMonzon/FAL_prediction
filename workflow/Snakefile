@@ -14,10 +14,11 @@ rule hmmsearch:
     conda:
         "envs/main_env.yaml"
     params:
-        db="{db}"
+        db = "{db}"
     shell:
-        "hmmsearch --domtblout {output[0]} resources/{params.db}_dom_hmms.hmm {input[0]} > {output[1]}"
-
+        "hmmsearch --domtblout {output[0]} resources/{params.db}_dom_hmms.hmm "
+        "{input[0]} > {output[1]}"
+        
 rule adapt_hmm_results:
     input:
         "results/{sample_name}_{db}_dom.tbl"
@@ -25,8 +26,9 @@ rule adapt_hmm_results:
         "results/{sample_name}_{db}_dom_adapted.tbl"
     conda:
         "envs/main_env.yaml"
-    script:
-        "scripts/make_out_readable.py"
+    shell:
+        "python3.7 workflow/scripts/make_out_readable.py --fh_in {input} "
+        "--fh_out {output}"
 
 rule treks:
     input:
@@ -39,35 +41,47 @@ rule treks:
     log:
         "results/{sample_name}_treks.log"
     shell:
-        "java -Xmx4G -jar scripts/T-ReksHPC.jar -f {input} -t {output[0]} "
-        "-a {output[1]} -m muscle -s 0.7 -S 5 -L 50 > {log}"
+        "java -Xmx4G -jar workflow/scripts/T-ReksHPC.jar -f {input} -t "
+        "{output[0]} -a {output[1]} -m muscle -s 0.7 -S 5 -L 50 > {log}"
 
 rule inmembrane:
     input:
         "{sample_name}.fasta"
     output:
         "{sample_name}.csv",
+        # "results/{sample_name}_PSE_cellwall.csv",
         directory("{sample_name}/")
     conda:
         "envs/inmembrane_env.yaml"
     shell:
         "inmembrane_scan {input[0]}"
+        # "inmembrane_scan {input[0]} | "
+        # "mv {output[0]} {output[1]} | "
+        # "rm -r {wildcards.sample_name}/"
+
 
 rule inmembrane_adapt:
     input:
-        "{sample_name}.csv",
-        directory("{sample_name}/")
+        "{sample_name}.csv"
     output:
-        "results/{sample_name}_PSE_cellwall.csv",
-        "results/{sample_name}_PSE_membrane.csv"
+        "results/{sample_name}_PSE_cellwall.csv"
     conda:
         "envs/main_env.yaml"
-    run:
-        shell("grep 'PSE-Cellwall' {input[0]} | cut -d, -f1 > {output[0]}")
-        shell("grep 'PSE-Membrane' {input[0]} || true | cut -d, -f1 > {output[1]}")
-        shell("mv {input[0]} results/")
-        shell("rm -r {input[1]}")
-
+    shell:
+        "mv {input[0]} {output[0]} | "
+        "rm -r {wildcards.sample_name}/"
+        
+# rule inmembrane_adapt:
+#     input:
+#         "{sample_name}.csv"
+#     output:
+#         "results/{sample_name}_PSE_cellwall.csv"
+#     conda:
+#         "envs/main_env.yaml"
+#     shell:
+#         "grep 'PSE-Cellwall' {input[0]} || true | cut -d, -f1 > {output[0]} | "
+#         "mv {input[0]} results/ | "
+#         "rm -r {wildcards.sample_name}/"
         
 rule hydro_charge:
     input:
@@ -76,8 +90,9 @@ rule hydro_charge:
         "results/{sample_name}_charge_hydro.csv"
     conda:
         "envs/main_env.yaml"
-    script:
-        "scripts/hydro_charge_calculat.py"
+    shell:
+        "python3.7 workflow/scripts/hydro_charge_calculat.py --fh_in {input} "
+        "--fh_out {output}"
 
 rule iupred:
     input:
@@ -87,7 +102,8 @@ rule iupred:
     conda:
         "envs/main_env.yaml"
     shell:
-        "python3.7 scripts/iupred2a.py -d scripts/ {input} 'long' > {output[0]}"
+        "python3.7 workflow/scripts/iupred2a.py -d workflow/scripts/ {input} "
+        "'long' > {output[0]}"
 
 
 rule iupred_calculate:
@@ -97,8 +113,9 @@ rule iupred_calculate:
         "results/{sample_name}_iupred_feature.csv"
     conda:
         "envs/main_env.yaml"
-    script:
-        "scripts/iupred_feature.py"
+    shell:
+        "python3.7 workflow/scripts/iupred_feature.py --fh_in {input} "
+        "--fh_out {output}"
 
 rule amino_acid_comp:
     input:
@@ -107,8 +124,9 @@ rule amino_acid_comp:
         "results/{sample_name}_amino_acid_comp.csv"
     conda:
         "envs/main_env.yaml"
-    script:
-        "scripts/amino_acid_comp.py"
+    shell:
+        "python3.7 workflow/scripts/amino_acid_comp.py --fh_in {input} "
+        "--fh_out {output}"
 
 rule combine:
     input:
@@ -118,7 +136,6 @@ rule combine:
         "results/{sample_name}_stalk_dom_adapted.tbl",
         "results/{sample_name}_adh_dom_adapted.tbl",
         "results/{sample_name}_PSE_cellwall.csv",
-        "results/{sample_name}_PSE_membrane.csv",
         "results/{sample_name}_iupred_feature.csv",
         "results/{sample_name}_charge_hydro.csv",
         "results/{sample_name}_amino_acid_comp.csv"
