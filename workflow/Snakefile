@@ -9,8 +9,8 @@ rule hmmsearch:
     input:
         "{sample_name}.fasta"
     output:
-        "results/{sample_name}_{db}_dom.tbl",
-        "results/{sample_name}_{db}_dom.out"
+        "results/features/{sample_name}_{db}_dom.tbl",
+        "results/features/{sample_name}_{db}_dom.out"
     conda:
         "envs/main_env.yaml"
     params:
@@ -21,9 +21,9 @@ rule hmmsearch:
         
 rule adapt_hmm_results:
     input:
-        "results/{sample_name}_{db}_dom.tbl"
+        "results/features/{sample_name}_{db}_dom.tbl"
     output:
-        "results/{sample_name}_{db}_dom_adapted.tbl"
+        "results/features/{sample_name}_{db}_dom_adapted.tbl"
     conda:
         "envs/main_env.yaml"
     shell:
@@ -34,12 +34,12 @@ rule treks:
     input:
         "{sample_name}.fasta"
     output:
-        "results/{sample_name}_treks.tsv",
-        "results/{sample_name}_treks.aln"
+        "results/features/{sample_name}_treks.tsv",
+        "results/features/{sample_name}_treks.aln"
     conda:
         "envs/main_env.yaml"
     log:
-        "results/{sample_name}_treks.log"
+        "results/features/{sample_name}_treks.log"
     shell:
         "java -Xmx4G -jar workflow/scripts/T-ReksHPC.jar -f {input} -t "
         "{output[0]} -a {output[1]} -m muscle -s 0.7 -S 5 -L 50 > {log}"
@@ -49,45 +49,28 @@ rule inmembrane:
         "{sample_name}.fasta"
     output:
         "{sample_name}.csv",
-        # "results/{sample_name}_PSE_cellwall.csv",
         directory("{sample_name}/")
     conda:
         "envs/inmembrane_env.yaml"
     shell:
         "inmembrane_scan {input[0]}"
-        # "inmembrane_scan {input[0]} | "
-        # "mv {output[0]} {output[1]} | "
-        # "rm -r {wildcards.sample_name}/"
-
 
 rule inmembrane_adapt:
     input:
         "{sample_name}.csv"
     output:
-        "results/{sample_name}_PSE_cellwall.csv"
+        "results/features/{sample_name}_PSE_cellwall.csv"
     conda:
         "envs/main_env.yaml"
     shell:
         "mv {input[0]} {output[0]} | "
         "rm -r {wildcards.sample_name}/"
-        
-# rule inmembrane_adapt:
-#     input:
-#         "{sample_name}.csv"
-#     output:
-#         "results/{sample_name}_PSE_cellwall.csv"
-#     conda:
-#         "envs/main_env.yaml"
-#     shell:
-#         "grep 'PSE-Cellwall' {input[0]} || true | cut -d, -f1 > {output[0]} | "
-#         "mv {input[0]} results/ | "
-#         "rm -r {wildcards.sample_name}/"
-        
+                
 rule hydro_charge:
     input:
         "{sample_name}.fasta"
     output:
-        "results/{sample_name}_charge_hydro.csv"
+        "results/features/{sample_name}_charge_hydro.csv"
     conda:
         "envs/main_env.yaml"
     shell:
@@ -98,7 +81,7 @@ rule iupred:
     input:
         "{sample_name}.fasta"
     output:
-        "results/{sample_name}_iupred.tab"
+        "results/features/{sample_name}_iupred.tab"
     conda:
         "envs/main_env.yaml"
     shell:
@@ -108,9 +91,9 @@ rule iupred:
 
 rule iupred_calculate:
     input:
-        "results/{sample_name}_iupred.tab"
+        "results/features/{sample_name}_iupred.tab"
     output:
-        "results/{sample_name}_iupred_feature.csv"
+        "results/features/{sample_name}_iupred_feature.csv"
     conda:
         "envs/main_env.yaml"
     shell:
@@ -121,7 +104,7 @@ rule amino_acid_comp:
     input:
         "{sample_name}.fasta"
     output:
-        "results/{sample_name}_amino_acid_comp.csv"
+        "results/features/{sample_name}_amino_acid_comp.csv"
     conda:
         "envs/main_env.yaml"
     shell:
@@ -131,16 +114,16 @@ rule amino_acid_comp:
 rule combine:
     input:
         "{sample_name}.fasta",
-        "results/{sample_name}_treks.tsv",
-        "results/{sample_name}_anchor_dom_adapted.tbl",
-        "results/{sample_name}_stalk_dom_adapted.tbl",
-        "results/{sample_name}_adh_dom_adapted.tbl",
-        "results/{sample_name}_PSE_cellwall.csv",
-        "results/{sample_name}_iupred_feature.csv",
-        "results/{sample_name}_charge_hydro.csv",
-        "results/{sample_name}_amino_acid_comp.csv"
+        "results/features/{sample_name}_treks.tsv",
+        "results/features/{sample_name}_anchor_dom_adapted.tbl",
+        "results/features/{sample_name}_stalk_dom_adapted.tbl",
+        "results/features/{sample_name}_adh_dom_adapted.tbl",
+        "results/features/{sample_name}_PSE_cellwall.csv",
+        "results/features/{sample_name}_iupred_feature.csv",
+        "results/features/{sample_name}_charge_hydro.csv",
+        "results/features/{sample_name}_amino_acid_comp.csv"
     output:
-        "results/{sample_name}_all_feature.csv"
+        "results/features/{sample_name}_all_feature.csv"
     conda:
         "envs/main_env.yaml"
     script:
@@ -149,7 +132,7 @@ rule combine:
 rule prediction:
     input:
         "resources/training_data.csv",
-        "results/{sample_name}_all_feature.csv"
+        "results/features/{sample_name}_all_feature.csv"
     output:
         "results/{sample_name}_prediction_results.tsv"
     conda:
