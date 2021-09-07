@@ -1,11 +1,7 @@
 import pandas as pd
 import os
-
-
-def test2(seq):
-    seq_out = seq[0:3]
-    print(seq)
-    return seq_out
+import re
+from math import log2
 
 
 def preparations(seq, analysisfolder, resultsfolder):
@@ -24,26 +20,173 @@ def preparations(seq, analysisfolder, resultsfolder):
     fh_seq.close()
 
 
-def hmmadh(analysisfolder, hmmfolder):
-    os.system('sh start_test.sh {}'.format('Hello'))
-    os.system('sh domain_search.sh {} {}'.format(analysisfolder, hmmfolder))
-    # os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl {}/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out'.format(hmmfolder))
-
-
-def test(seq):
-    seq_out = seq[0:3]
-    print(seq)
-    return seq_out
+hmmsearch_cols = ['ID', 'tlen', 'qname', 'acc', 'qlen', 'Evalue', 'score',
+                  'bias', 'cEvalue', 'iEvalue', 'Dscore', 'Dbias', 'from',
+                  'to']
 
     
 class collect_features():
 
-    def test3(seq):
-        seq_out = seq[0:3]
-        print(seq_out)
-        return seq_out
+    # # maybe creating class object for each seq for aa_comp and etc. 
+    # def __init__(self, name, seq):
+    #     self.name = name
+    #     self.seq = seq
+        
+    def adapt_hmmsearch(domtbl, output):
+        fh_domtbl = open(domtbl, 'r')
+        fh_out = open(output, 'w')
+        for line in fh_domtbl:
+            if line.startswith('#'):
+                continue
+            else:
+                wo_gaps = re.sub(' +', ' ', line)
+                w_tabs_list = wo_gaps.rsplit(' ')
+                selection = [0, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 19, 20]
+                out_list = [w_tabs_list[i] for i in selection]
+                out_string = '\t'.join([str(x) for x in out_list])
+                fh_out.write('{}\n'.format(out_string))
+        fh_out.close()
+        fh_domtbl.close()
+
+    def hydro_charge(name, seq):
+        hydro_aa = ['A', 'I', 'L', 'M', 'F', 'W', 'Y', 'V']
+        charged_aa = ['E', 'D', 'K', 'R']
+        hydro_fraction = [aa for aa in seq if aa in hydro_aa]
+        hydro_fraction = round(len(hydro_fraction)/len(seq), 2)
+        charge_fraction = [aa for aa in seq if aa in charged_aa]
+        charge_fraction = round(len(charge_fraction)/len(seq), 2)
+        df_hydro_charge = pd.DataFrame({'ID': [name],
+                                        'Hydro_portion': [hydro_fraction],
+                                        'Charge_portion': [charge_fraction]})
+        return df_hydro_charge
+
+    def aa_comp(name, seq):
+        amino_acids = ['R', 'H', 'K', 'D', 'E', 'S', 'T', 'N', 'Q', 'C', 'G',
+                       'P', 'A', 'V', 'I', 'L', 'M', 'F', 'Y', 'W']
+        divergence = []
+        aa_dict = {}
+        for aa in amino_acids:
+            P = seq.count(aa)/len(seq)
+            if P != 0:
+                D = P * log2(P/0.05)
+                divergence.append(D)
+            aa_dict[aa] = round(((seq.count(aa)/len(seq))*100), 2)
+        entropy = round(sum(divergence), 2)
+        entropy_df = pd.DataFrame({'ID': [name], 'rel_entropy': [entropy]})
+        df_aa = pd.DataFrame([aa_dict])
+        df_aa['ID'] = name
+        df_aa_comp = entropy_df.merge(df_aa, on='ID', how='left')
+        return df_aa_comp
+
+    # def aa_comp_s(self):
+    #     amino_acids = ['R', 'H', 'K', 'D', 'E', 'S', 'T', 'N', 'Q', 'C', 'G',
+    #                    'P', 'A', 'V', 'I', 'L', 'M', 'F', 'Y', 'W']
+    #     divergence = []
+    #     aa_dict = {}
+    #     for aa in amino_acids:
+    #         P = self.seq.count(aa)/len(self.seq)
+    #         if P != 0:
+    #             D = P * log2(P/0.05)
+    #             divergence.append(D)
+    #         aa_dict[aa] = round(((self.seq.count(aa)/len(self.seq))*100), 2)
+    #     entropy = round(sum(divergence), 2)
+    #     entropy_df = pd.DataFrame({'ID': [self.name], 'rel_entropy': [entropy]})
+    #     df_aa = pd.DataFrame([aa_dict])
+    #     df_aa['ID'] = self.name
+    #     df_aa_comp = entropy_df.merge(df_aa, on='ID', how='left')
+    #     return df_aa_comp
     
-    def hmmsearch():
-        os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl data/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out')
-        print('hmmsearch adh done')
-        # python3.7 lib/make_out_readable.py --domtblout analysis/query_seq_adh_dom.tbl --out_readable analysis/query_seq_adh_dom_readable.tbl --out_important analysis/query_seq_adh_dom_important.tbl
+    def adapt_iupred(iupred_results):
+        df_iupred = pd.read_csv(iupred_results, sep='\t',
+                                names=['SEQID', 'POS', 'RES', 'IUPRED2'],
+                                comment='#')
+        df_iupred['ID'] = df_iupred.SEQID
+        protein_ids = list(set(df_iupred.ID.tolist()))
+        fraction_disorder = {}
+        for x in protein_ids:
+            df_one = df_iupred[df_iupred.ID == x]
+            df_one_len = df_one.shape[0]
+            perc_dis = round(((
+                df_one[df_one.IUPRED2 > 0.5].shape[0]) / (df_one_len)) * 100, 2)
+            fraction_disorder[x] = perc_dis
+        iupred_frac = pd.DataFrame(fraction_disorder.items(),
+                                   columns=['ID', 'frac_disordered'])
+        return iupred_frac
+
+    def length(name, seq):
+        length = len(seq)
+        df_len = pd.DataFrame({'ID': name, 'length': length})
+        return df_len
+
+    def treks(treks_results):
+        df = pd.read_csv(treks_results, sep='\t')
+        df['ID'] = df.seqid
+        df = df[df.replength > 10]
+        df['treks_07'] = 1
+        df = df[['ID', 'treks_07']]
+        df = df.fillna(0)
+        return df
+
+    hmmsearch_cols = ['ID', 'tlen', 'qname', 'acc', 'qlen', 'Evalue', 'score',
+                      'bias', 'cEvalue', 'iEvalue', 'Dscore', 'Dbias', 'from',
+                      'to']
+
+    def anchor_search(name, seq, hmm_anchor):
+        LPxTGs = []
+        seq1 = seq[-50:]
+        sortase = re.compile('LP.T[G|A|N|D]')
+        sortase2 = re.compile('NP.TG')
+        sortase3 = re.compile('LP.GA')
+        sortase4 = re.compile('LA.TG')
+        sortase5 = re.compile('NPQTN')
+        sortase6 = re.compile('IP.TG')
+        if [m for m in re.finditer(sortase, seq1)]:
+            LPxTGs.append(name)
+        if [m for m in re.finditer(sortase2, seq1)]:
+            LPxTGs.append(name)
+        if [m for m in re.finditer(sortase3, seq1)]:
+            LPxTGs.append(name)
+        if [m for m in re.finditer(sortase4, seq1)]:
+            LPxTGs.append(name)
+        if [m for m in re.finditer(sortase5, seq1)]:
+            LPxTGs.append(name)
+        if [m for m in re.finditer(sortase6, seq1)]:
+            LPxTGs.append(name)
+        # else:
+        #     continue
+        df = pd.read_csv(hmm_anchor, sep='\t', names=hmmsearch_cols)
+        anchor_id = df.ID.tolist()
+        ids_w_any_anchor = list(set(LPxTGs + anchor_id))
+        df_anchor = pd.DataFrame({'ID': ids_w_any_anchor})
+        df_anchor['Any_anchor'] = 1
+        return df_anchor
+
+    def number_stalk(hmm_stalk):
+        df = pd.read_csv(hmm_stalk, sep='\t', names=hmmsearch_cols)
+        print(df)
+        count_s = df['ID'].value_counts().rename_axis('ID').reset_index(
+            name='counts')
+        df_count_stalk = count_s.rename({'counts': 'Stalks'}, axis=1)
+        return df_count_stalk
+
+    def any_adh(hmm_adh):
+        df = pd.read_csv(hmm_adh, sep='\t', names=hmmsearch_cols)
+        adhs = list(set(df.ID.tolist()))
+        df_any_adh = pd.DataFrame({'ID': adhs})
+        df_any_adh['Any_adh'] = 1
+        return df_any_adh
+
+    def inmembrane(inmembrane_fh):
+        df = pd.read_csv(inmembrane_fh, names=['ID', 'Prediction', 'Length',
+                                               'results', 'description'])
+        cellwall_df = df[df['Prediction'] == 'PSE-Cellwall']
+        cellwall_df['cellwall'] = 1
+        PSE_df = cellwall_df[['ID', 'cellwall']]
+        return PSE_df
+    
+    def combine_feature():
+        pass
+
+
+# df_stalks = collect_features.number_stalk('tmp.tbl')
+# print(df_stalks)
