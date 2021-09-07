@@ -21,6 +21,10 @@ def preparations(seq, analysisfolder, resultsfolder):
 def hmmadh(hmmfolder):
     os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl {}/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out'.format(hmmfolder))
 
+
+def test(seq):
+    print(seq)
+
     
 class collect_features():
     
