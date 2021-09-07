@@ -35,6 +35,11 @@ def test(seq):
 
     
 class collect_features():
+
+    def test3(seq):
+        seq_out = seq[0:3]
+        print(seq_out)
+        return seq_out
     
     def hmmsearch():
         os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl data/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out')
