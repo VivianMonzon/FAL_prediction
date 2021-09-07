@@ -23,7 +23,9 @@ def hmmadh(hmmfolder):
 
 
 def test(seq):
+    seq_out = seq[0:3]
     print(seq)
+    return seq_out
 
     
 class collect_features():
