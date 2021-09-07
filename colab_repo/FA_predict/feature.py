@@ -2,6 +2,12 @@ import pandas as pd
 import os
 
 
+def test2(seq):
+    seq_out = seq[0:3]
+    print(seq)
+    return seq_out
+
+
 def preparations(seq, analysisfolder, resultsfolder):
     if os.path.exists('{}'.format(analysisfolder)):
         print('{} folder exists'.format(analysisfolder))
