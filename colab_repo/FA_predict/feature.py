@@ -24,8 +24,10 @@ def preparations(seq, analysisfolder, resultsfolder):
     fh_seq.close()
 
 
-def hmmadh(hmmfolder):
-    os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl {}/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out'.format(hmmfolder))
+def hmmadh(analysisfolder, hmmfolder):
+    os.system('sh start_test.sh {}'.format('Hello'))
+    os.system('sh domain_search.sh {} {}'.format(analysisfolder, hmmfolder))
+    # os.system('hmmsearch --cut_ga --domtblout analysis/query_seq_adh_dom.tbl {}/adh_dom_hmms.hmm query_seq.fa > analysis/query_seq_adh_dom.out'.format(hmmfolder))
 
 
 def test(seq):
