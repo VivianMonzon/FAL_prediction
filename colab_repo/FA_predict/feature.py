@@ -1,10 +1,11 @@
 import pandas as pd
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 import os
 import re
 from math import log2
 
 
-def preparations(seq, analysisfolder, resultsfolder):
+def create_folder(analysisfolder, resultsfolder):
     if os.path.exists('{}'.format(analysisfolder)):
         print('{} folder exists'.format(analysisfolder))
     else:
@@ -15,6 +16,9 @@ def preparations(seq, analysisfolder, resultsfolder):
     else:
         os.system('mkdir {}'.format(resultsfolder))
         print('{} folder created'.format(resultsfolder))
+        
+
+def query_seq_to_file(seq):
     fh_seq = open('query_seq.fa', 'w')
     fh_seq.write('>query_sequence\n{}\n'.format(seq))
     fh_seq.close()
@@ -131,29 +135,31 @@ class collect_features():
                       'bias', 'cEvalue', 'iEvalue', 'Dscore', 'Dbias', 'from',
                       'to']
 
-    def anchor_search(name, seq, hmm_anchor):
+    def anchor_search(fh_seq, hmm_anchor):
+        fh = open(fh_seq)
         LPxTGs = []
-        seq1 = seq[-50:]
-        sortase = re.compile('LP.T[G|A|N|D]')
-        sortase2 = re.compile('NP.TG')
-        sortase3 = re.compile('LP.GA')
-        sortase4 = re.compile('LA.TG')
-        sortase5 = re.compile('NPQTN')
-        sortase6 = re.compile('IP.TG')
-        if [m for m in re.finditer(sortase, seq1)]:
-            LPxTGs.append(name)
-        if [m for m in re.finditer(sortase2, seq1)]:
-            LPxTGs.append(name)
-        if [m for m in re.finditer(sortase3, seq1)]:
-            LPxTGs.append(name)
-        if [m for m in re.finditer(sortase4, seq1)]:
-            LPxTGs.append(name)
-        if [m for m in re.finditer(sortase5, seq1)]:
-            LPxTGs.append(name)
-        if [m for m in re.finditer(sortase6, seq1)]:
-            LPxTGs.append(name)
-        # else:
-        #     continue
+        for name, seq in SimpleFastaParser(fh):
+            seq1 = seq[-50:]
+            sortase = re.compile('LP.T[G|A|N|D]')
+            sortase2 = re.compile('NP.TG')
+            sortase3 = re.compile('LP.GA')
+            sortase4 = re.compile('LA.TG')
+            sortase5 = re.compile('NPQTN')
+            sortase6 = re.compile('IP.TG')
+            if [m for m in re.finditer(sortase, seq1)]:
+                LPxTGs.append(name)
+            if [m for m in re.finditer(sortase2, seq1)]:
+                LPxTGs.append(name)
+            if [m for m in re.finditer(sortase3, seq1)]:
+                LPxTGs.append(name)
+            if [m for m in re.finditer(sortase4, seq1)]:
+                LPxTGs.append(name)
+            if [m for m in re.finditer(sortase5, seq1)]:
+                LPxTGs.append(name)
+            if [m for m in re.finditer(sortase6, seq1)]:
+                LPxTGs.append(name)
+            else:
+                continue
         df = pd.read_csv(hmm_anchor, sep='\t', names=hmmsearch_cols)
         anchor_id = df.ID.tolist()
         ids_w_any_anchor = list(set(LPxTGs + anchor_id))
