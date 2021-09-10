@@ -104,6 +104,10 @@ class collect_features():
         df_iupred = pd.read_csv(iupred_results, sep='\t',
                                 names=['SEQID', 'POS', 'RES', 'IUPRED2'],
                                 comment='#')
+        df_iupred['ID'] = df_iupred.SEQID.apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         df_iupred['ID'] = df_iupred.SEQID
         protein_ids = list(set(df_iupred.ID.tolist()))
         fraction_disorder = {}
@@ -117,14 +121,12 @@ class collect_features():
                                    columns=['ID', 'frac_disordered'])
         return iupred_frac
 
-    def length(name, seq):
-        length = len(seq)
-        df_len = pd.DataFrame({'ID': name, 'length': length})
-        return df_len
-
     def treks(treks_results):
         df = pd.read_csv(treks_results, sep='\t')
-        df['ID'] = df.seqid
+        df['ID'] = df.seqid.apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         df = df[df.replength > 10]
         df['treks_07'] = 1
         df = df[['ID', 'treks_07']]
@@ -139,6 +141,12 @@ class collect_features():
         fh = open(fh_seq)
         LPxTGs = []
         for name, seq in SimpleFastaParser(fh):
+            if '|' in name:
+                name = name.split('|')[1].split('|')[0]
+            if ' ' in name:
+                name = name.split(' ')[0]
+            if '.' in name:
+                name = name.split('.')[0]
             seq1 = seq[-50:]
             sortase = re.compile('LP.T[G|A|N|D]')
             sortase2 = re.compile('NP.TG')
@@ -161,6 +169,10 @@ class collect_features():
             else:
                 continue
         df = pd.read_csv(hmm_anchor, sep='\t', names=hmmsearch_cols)
+        df['ID'] = df['ID'].apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         anchor_id = df.ID.tolist()
         ids_w_any_anchor = list(set(LPxTGs + anchor_id))
         df_anchor = pd.DataFrame({'ID': ids_w_any_anchor})
@@ -169,7 +181,10 @@ class collect_features():
 
     def number_stalk(hmm_stalk):
         df = pd.read_csv(hmm_stalk, sep='\t', names=hmmsearch_cols)
-        # print(df)
+        df['ID'] = df['ID'].apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         count_s = df['ID'].value_counts().rename_axis('ID').reset_index(
             name='counts')
         df_count_stalk = count_s.rename({'counts': 'Stalks'}, axis=1)
@@ -177,6 +192,10 @@ class collect_features():
 
     def any_adh(hmm_adh):
         df = pd.read_csv(hmm_adh, sep='\t', names=hmmsearch_cols)
+        df['ID'] = df['ID'].apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         adhs = list(set(df.ID.tolist()))
         df_any_adh = pd.DataFrame({'ID': adhs})
         df_any_adh['Any_adh'] = 1
@@ -188,4 +207,8 @@ class collect_features():
         cellwall_df = df[df['Prediction'] == 'PSE-Cellwall']
         cellwall_df['cellwall'] = 1
         PSE_df = cellwall_df[['ID', 'cellwall']]
+        PSE_df['ID'] = PSE_df['ID'].apply(
+            lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
+                x.split('.')[0] if '.' in x else (
+                    x.split(' ')[0] if ' ' in x else x)))
         return PSE_df
