@@ -20,9 +20,9 @@ class ML_prediction():
         test_set_wo_id = test_set.drop('ID', axis=1)
         y_model = model.predict(test_set_wo_id)
         probability_1 = model.predict_proba(test_set_wo_id)[:, 1]
-        test_set['prediction'] = y_model
-        test_set['probability_Adh'] = probability_1
-        test_set = test_set[['ID', 'prediction', 'probability_Adh',
+        test_set['Prediction'] = y_model
+        test_set['Prediction_score'] = probability_1
+        test_set = test_set[['ID', 'Prediction', 'Prediction_score',
                              'length', 'Hydro_portion', 'Charge_portion', 
                              'rel_entropy', 'R', 'H', 'K', 'D', 'E', 'S', 'T', 
                              'N', 'Q', 'C', 'G', 'P', 'A', 'V', 'I', 'L', 'M', 
