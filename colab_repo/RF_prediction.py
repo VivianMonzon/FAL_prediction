@@ -22,5 +22,10 @@ class ML_prediction():
         probability_1 = model.predict_proba(test_set_wo_id)[:, 1]
         test_set['prediction'] = y_model
         test_set['probability_Adh'] = probability_1
+        test_set = test_set[['ID', 'prediction', 'probability_Adh',
+                             'length', 'Hydro_portion', 'Charge_portion', 
+                             'rel_entropy', 'R', 'H', 'K', 'D', 'E', 'S', 'T', 
+                             'N', 'Q', 'C', 'G', 'P', 'A', 'V', 'I', 'L', 'M', 
+                             'F', 'Y', 'W']]
         test_set.to_csv('{}/{}.tsv'.format(resultsfolder,
                                            output_fh), index=False, sep='\t')
