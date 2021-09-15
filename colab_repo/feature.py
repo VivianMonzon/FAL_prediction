@@ -204,11 +204,11 @@ class collect_features():
     def inmembrane(inmembrane_fh):
         df = pd.read_csv(inmembrane_fh, names=['ID', 'Prediction', 'Length',
                                                'results', 'description'])
-        cellwall_df = df[df['Prediction'] == 'PSE-Cellwall']
-        cellwall_df['cellwall'] = 1
-        PSE_df = cellwall_df[['ID', 'cellwall']]
-        PSE_df['ID'] = PSE_df['ID'].apply(
+        df['ID'] = df['ID'].apply(
             lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
                 x.split('.')[0] if '.' in x else (
                     x.split(' ')[0] if ' ' in x else x)))
+        cellwall_df = df[df['Prediction'] == 'PSE-Cellwall']
+        cellwall_df['cellwall'] = 1
+        PSE_df = cellwall_df[['ID', 'cellwall']]
         return PSE_df
