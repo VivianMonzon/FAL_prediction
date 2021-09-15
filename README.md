@@ -1,12 +1,12 @@
-# Discovery of bacterial Fibrillar Adhesins
-Snakemake pipeline to predict Fibrillar adhesins in Gram positive bacterial proteins using a RandomForest classification approach.
+# Discovery of bacterial Fibrillar Adhesins-like (FA-like) proteins
+Snakemake pipeline to predict FA-like proteins in Gram positive bacteria using a RandomForest classification approach.
 Fibrillar adhesins are bacterial surface proteins, which play an important role in the bacterial pathogenesis [[1]](#1). The proteins of this novel defined protein class can bind
 to proteins, carbohydrates or even ice crystalls and can enable the colonization of host cells. <br/>
-To predict your own protein sequences, indicate your sequence file in the config/config.yaml file and run snakemake using the provided conda environments (optional: number of cores to use):<br/>
+To predict FA-like proteins, indicate your sequence file in the config/config.yaml file and run snakemake using the provided conda environments (optional: number of cores to use):<br/>
 ```bash
 snakemake --use-conda --cores 4
 ```
-Alternatively, use the google colab repo (colab_repo/RF_prediction.py).
+Alternatively, the google colab notebook can be used (colab_repo/ML_FA_prediction.ipynb).
 
 ## References
 <a id="1">[1]</a>
