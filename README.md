@@ -21,6 +21,7 @@ The identification features used in this classification approach include the sea
 </ul>
 </ul>
 
+The basic packages required for the code are listed in the 'requirements.txt' file.
 
 ## Running the FA-like protein prediction approach
 ```
