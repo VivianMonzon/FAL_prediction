@@ -21,21 +21,19 @@ def main():
     FA_prediction.add_argument('--treks_dir', required=True,
                                help='path to folder containing T-REKS tool. ' 
                                'Example: /Users/vmonzon/Downloads')
-    FA_prediction.add_argument('--lipop_dir', required=False,
+    FA_prediction.add_argument('--lipop_dir', required=True,
                                help='path to folder containing LipoP tool.'
-                               'If none given, excepts to find it in same '
-                               'directory as T-REKS. Example: '
-                               '/Users/vmonzon/Downloads/software/LipoP1.0a')
-    FA_prediction.add_argument('--signalp_dir', required=False,
+                               'Example: /Users/vmonzon/Downloads/software/LipoP1.0a')
+    FA_prediction.add_argument('--signalp_dir', required=True,
                                help='path to folder containing SignalP tool. '
-                               'If none given, excepts to find it in same '
-                               'directory as T-REKS. Example: '
-                               '/Users/vmonzon/Downloads/software/signalp-5.0/bin')
-    FA_prediction.add_argument('--tmhmm_dir', required=False,
+                               'Example: /Users/vmonzon/Downloads/software/signalp-5.0/bin')
+    FA_prediction.add_argument('--tmhmm_dir', required=True,
                                help='path to folder containing TMHMM tool. '
-                               'If none given, excepts to find it in same '
-                               'directory as T-REKS. Example: '
-                               '/Users/vmonzon/Downloads/software/tmhmm-2.0c/bin')
+                               'Example: /Users/vmonzon/Downloads/software/tmhmm-2.0c/bin')
+    FA_prediction.add_argument('--iupred_dir', required=True,
+                               help='path to folder containing iupred2a.py file'
+                               'and corresponding data folder. Example: '
+                               '/Users/vmonzon/Downloads/software')
     FA_prediction.set_defaults(func=predict)
     
     args = parser.parse_args()

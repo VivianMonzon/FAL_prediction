@@ -20,13 +20,13 @@ class FAL_prediction(object):
             print('{} folder created'.format(resultsfolder))
 
     def run_analysis(self, analysisfolder, resultsfolder, fasta_seqs, jobname,
-                     treks, lipop, signalp, tmhmm):
+                     treks, lipop, signalp, tmhmm, iupred):
         if jobname is None:
             jobname = fasta_seqs.split('.')[0]
         print('Collect feature:')
-        os.system('lib/analyse_testing_data.sh {} {} {} {} {} {} {} {}'.format(
+        os.system('lib/analyse_testing_data.sh {} {} {} {} {} {} {} {} {}'.format(
             fasta_seqs, analysisfolder, resultsfolder, jobname, treks, lipop,
-            signalp, tmhmm))
+            signalp, tmhmm, iupred))
 
     def run_random_forest(self,
                           analysisfolder,

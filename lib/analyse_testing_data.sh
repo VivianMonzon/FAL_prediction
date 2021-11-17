@@ -8,6 +8,7 @@ treks=$5
 lipop=$6
 signalp=$7
 tmhmm=$8
+iupred=$9
 
 main(){
     hmmersearch
@@ -47,7 +48,7 @@ hydro_charge(){
 
 iupred(){
     echo 'Iupred predictions and feature collection'
-    python3.7 lib/iupred2a.py $fasta_seqs "long" > $analysis_folder/${jobname}_iupred.tab
+    python3.7 $iupred/iupred2a.py $fasta_seqs "long" > $analysis_folder/${jobname}_iupred.tab
     python3.7 lib/iupred_feature.py --fh_in $analysis_folder/${jobname}_iupred.tab \
 	      --fh_out $analysis_folder/${jobname}_iupred_feature.csv
 }
