@@ -4,23 +4,21 @@ Fibrillar adhesins are bacterial surface proteins, which play an important role 
 to proteins, carbohydrates or even ice crystalls and can enable the colonization of host cells. <br/>
 ## Requirements
 The identification features used in this classification approach include the search for identical tandem repeats by a tool called T-REKS [[2]](#2) and the search for cell surface anchors by the pipeline inmembrane [[3]](#3). T-REKS is available to download [here](https://bioinfo.crbm.cnrs.fr/index.php?route=tools&tool=3). Conda is required for our classification approach to use the environment provided to run inmembrane. Additionally, Inmembrane is build on the following tools:<br>
-One:
-[here](https://services.healthtech.dtu.dk/cgi-bin/sw_request)
 
 <ul>
 <li>TMHMM 2.0</li>
 <ul>
-<li> Download: https://services.healthtech.dtu.dk/cgi-bin/sw_request) and follow the [instructions here](https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html).</li>
+<li> Download: https://services.healthtech.dtu.dk/cgi-bin/sw_request </li>
 <li> Instructions: https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html </li>
 </ul>
 <li>SignalP 4.1</li>
 <ul>
-<li> [Download here](https://services.healthtech.dtu.dk/service.php?SignalP-4.1). </li>
+<li> Download: https://services.healthtech.dtu.dk/service.php?SignalP-4.1 </li>
 </ul>
 <li>LipoP 1.0</li>
-	  <ul>
-		<li> [Download here](https://services.healthtech.dtu.dk/service.php?LipoP-1.0) </li>
-	  </ul>
+<ul>
+<li> Download: https://services.healthtech.dtu.dk/service.php?LipoP-1.0 </li>
+</ul>
 </ul>
 
 
