@@ -7,15 +7,11 @@ The identification features used in this classification approach include the sea
 One:
 [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request)
 
-Two:
-[here (https://services.healthtech.dtu.dk/cgi-bin/sw_request)][here]
-
-Three:
-<https://services.healthtech.dtu.dk/cgi-bin/sw_request>
 <ul>
 <li>TMHMM 2.0</li>
 <ul>
 <li>Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request) and follow the [instructions here](https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html).</li>
+<li>[Download here][5] and follow instructions [here][6]</li>
 </ul>
 <li>SignalP 4.1</li>
 <ul>
@@ -27,6 +23,9 @@ Three:
 </ul>
 </ul>
 
+
+[5]: https://services.healthtech.dtu.dk/cgi-bin/sw_request
+[6]: https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html
 ## Running the FA-like protein prediction approach
 ```
 python3.7 ML_predict.py predict \
