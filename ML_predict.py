@@ -49,20 +49,5 @@ def predict(args):
     FA_prediction_analysis = Controller(args)
     FA_prediction_analysis.predict()
 
-    
-# def create(args):
-#     create_folder_controller = Controller(args)
-#     create_folder_controller.create()
-
-
-# def collect_feature(args):
-#     run_feature_analysis = Controller(args)
-#     run_feature_analysis.collect_feature()
-
-
-# def ML_prediction(args):
-#     run_ML_prediction = Controller(args)
-#     run_ML_prediction.ML_prediction()
-
 
 main()
