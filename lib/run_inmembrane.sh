@@ -14,10 +14,29 @@ main(){
 }
 
 write_config(){
-    echo "{\n  'fasta': '',\n  'csv': '',\n  'out_dir': '',\n  'protocol': 'gram_pos',\n\n " \
-    "'signalp4_bin': '$signalp_dir/signalp',\n  'lipop1_bin': '$lipop_dir/LipoP',\n  'tmhmm_bin': '$tmhmm_dir/tmhmm',\n  'memsat3_bin': 'runmemsat',\n  'helix_programs': ['tmhmm'],\n  'terminal_exposed_loop_min': 50,\n  'internal_exposed_loop_min': 100,\n\n " \
-    "'hmmsearch3_bin': 'hmmsearch',\n  'hmm_evalue_max': 0.1,\n  'hmm_score_min': 10,\n\n " \
-    "'barrel_programs': ['tmbetadisc-rbf'],\n  'bomp_clearly_cutoff': 3,\n  'bomp_maybe_cutoff': 1,\n  'tmbetadisc_rbf_method': 'aadp'}" > inmembrane.config
+    echo "{
+'fasta': '',
+'csv': '',
+'out_dir': '',
+'protocol': 'gram_pos',
+                                                                                                                                                                                                                                                                              
+'signalp4_bin': '$signalp_dir/signalp',
+'lipop1_bin': '$lipop_dir/LipoP',
+'tmhmm_bin': '$tmhmm_dir/tmhmm',
+'memsat3_bin': 'runmemsat',
+'helix_programs': ['tmhmm'],
+'terminal_exposed_loop_min': 50,
+'internal_exposed_loop_min': 100,
+
+'hmmsearch3_bin': 'hmmsearch',
+'hmm_evalue_max': 0.1,
+'hmm_score_min': 10,
+
+'barrel_programs': ['tmbetadisc-rbf'],
+'bomp_clearly_cutoff': 3,
+'bomp_maybe_cutoff': 1,
+'tmbetadisc_rbf_method': 'aadp'
+}" > inmembrane.config    
 }
 
 activate_py2(){
