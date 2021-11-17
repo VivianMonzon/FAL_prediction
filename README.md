@@ -7,7 +7,7 @@ The identification features used in this classification approach include the sea
 <ul>
 <li>TMHMM 2.0</li>
 <ul>
-<li>[Download here](https://services.healthtech.dtu.dk/cgi-bin/sw_request) and follow the [instructions here](https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html).</li>
+<li>Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request) and follow the [instructions here](https://ssbio.readthedocs.io/en/latest/instructions/tmhmm.html).</li>
 </ul>
 <li>SignalP 4.1</li>
 <ul>
@@ -36,11 +36,11 @@ python3.7 ML_predict.py predict \
 <a id="1">[1]</a>
 Monzon, V., Lafita, A. & Bateman, A. 
 Discovery of fibrillar adhesins across bacterial species.
-BMC Genomics 22, 550 (2021). https://doi.org/10.1186/s12864-021-07586-2
+BMC Genomics 22, 550 (2021). https://doi.org/10.1186/s12864-021-07586-2 <br>
 <a id="2">[2]</a>
 Julien Jorda, Andrey V. Kajava.
 T-REKS: identification of Tandem REpeats in sequences with a K-meanS based algorithm.
-Bioinformatics, Volume 25, Issue 20, 15 October 2009, Pages 2632–2638, https://doi.org/10.1093/bioinformatics/btp482
+Bioinformatics, Volume 25, Issue 20, 15 October 2009, Pages 2632–2638, https://doi.org/10.1093/bioinformatics/btp482 <br>
 <a id="3">[3]</a>
 Perry, A.J., Ho, B.K.
 Inmembrane, a bioinformatic workflow for annotation of bacterial cell-surface proteomes.
