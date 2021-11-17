@@ -21,17 +21,15 @@ write_config(){
 }
 
 activate_py2(){
-    # conda deactivate
-    ENVS=$(conda env list | awk '{print "python2_env"}' )
-    if [[ $ENVS = *"python2_env"* ]]; then
+    ENVS=$(conda env list | grep 'inmembrane_env' | cut -d' ' -f1)
+    if [[ $ENVS = *"inmembrane_env"* ]]; then
+    	echo 'Environment exists'
 	continue
-	# echo 'All good'
-	# source activate $1
     else
-	echo "python2_env doesnot exists - will created it"
-	# conda env create -f inmmbrane_env.yaml
+    	echo "inmembrane_env doesnot exists - will create it"
+    	conda env create -f env/inmembrane_env.yml
     fi;
-    source activate python2_env
+    source activate inmembrane_env
 }
 
 run_inmem(){
@@ -40,7 +38,6 @@ run_inmem(){
 
 deactivate_py2(){
     conda deactivate
-    # conda activate FAL_predict
 }
 
 main
