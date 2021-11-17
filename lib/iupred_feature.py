@@ -30,5 +30,3 @@ if __name__ == "__main__":
     iupred_out = open(args.fh_in)
     df_out = iupred(iupred_out)
     df_out.to_csv(args.fh_out, index=False)
-
-# iupred = iupred(snakemake.input[0], snakemake.output[0])
