@@ -21,7 +21,7 @@ The identification features used in this classification approach include the sea
 </ul>
 </ul>
 
-The basic packages required for the code are listed in the 'requirements.txt' file. If a newer python version is used, please adapt hmmsearch file (lib/run_hmmsearch.sh) accordingly. 
+The basic packages required for the code are listed in the 'requirements.txt' file. If a newer python version is used, please adapt [hmmsearch file](lib/run_hmmsearch.sh) accordingly. 
 
 ## Running the FA-like protein prediction approach
 ```
