@@ -34,8 +34,9 @@ treks(){
 inmembrane(){
     echo 'Inmembrane cell surface anchor prediction'
     sh lib/run_inmembrane.sh $fasta_seqs $lipop $signalp $tmhmm $analysis_folder
-    mv $(basename $fasta_seqs .fasta).csv $analysis_folder/${jobname}_pse.csv
-    mv $(basename $fasta_seqs .fasta) $analysis_folder
+    path="$(dirname "$fasta_seqs")"
+    mv $path/$(basename $fasta_seqs .fasta).csv $analysis_folder/${jobname}_pse.csv
+    mv $path/$(basename $fasta_seqs .fasta) $analysis_folder
     # grep 'PSE-Membrane' $analysis_folder/$(basename "$fasta_seqs" .fasta).csv | cut -d, -f1 | cut -d'|' -f2 > $analysis_folder/test_set_PSE_membrane.csv
     # grep 'PSE-Cellwall' $analysis_folder/$(basename "$fasta_seqs" .fasta).csv | cut -d, -f1 | cut -d'|' -f2 > $analysis_folder/test_set_PSE_cellwall.csv
 }
