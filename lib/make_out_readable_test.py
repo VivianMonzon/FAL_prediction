@@ -15,10 +15,10 @@ written_tbl = StringIO(
 
 class TestMakeOutReadable(unittest.TestCase):
     def test_adapt_output(self):
-        adapted_out = 'V6M7M1.1\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t1.3e-26\t80.5\t4.0\t398\n' \
-            'V6M7M1.1\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t1.2e-12\t35.3\t1.7\t540\n' \
-            'V6M7M1.1\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t5.7e-11\t29.9\t4.1\t661\n' \
-            'V6M7M1.1\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t1.6e-29\t89.9\t2.4\t817\n'
+        adapted_out = 'V6M7M1.1\t1569\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t6.7e-27\t1.3e-26\t80.5\t4.0\t273\t398\n' \
+            'V6M7M1.1\t1569\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t6.1e-13\t1.2e-12\t35.3\t1.7\t405\t540\n' \
+            'V6M7M1.1\t1569\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t2.9e-11\t5.7e-11\t29.9\t4.1\t552\t661\n' \
+            'V6M7M1.1\t1569\tCollagen_bind\tPF05737.13\t131\t3.9e-80\t253.7\t44.5\t8.2e-30\t1.6e-29\t89.9\t2.4\t681\t817\n'
         fh_tmp = open('tmp.tbl', 'w')
         adapt_output(written_tbl, fh_tmp)
         content = open('tmp.tbl').read()
