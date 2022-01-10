@@ -10,7 +10,7 @@ def adapt_output(fh_in, fh_adapt):
             wo_gaps = re.sub(' +', ' ', line)
             w_tabs = wo_gaps.replace(' ', '\t')
             w_tabs = re.split(r'\t+', w_tabs)
-            important = w_tabs[0:1] + w_tabs[3:9] + w_tabs[12:15] + w_tabs[20:21]
+            important = w_tabs[0:1] + w_tabs[2:9] + w_tabs[11:15] + w_tabs[19:21]
             important = '\t'.join(important)
             fh_adapt.write('{}\n'.format(important))
     fh_adapt.close()
