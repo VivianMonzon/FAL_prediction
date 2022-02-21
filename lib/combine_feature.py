@@ -93,25 +93,13 @@ def any_stalk(fh_in):
 
 def any_adh(fh_in):
     df = pd.read_csv(fh_in, sep='\t', names=hmmsearch_cols)
+    print(df.head())
     df['ID'] = df['ID'].apply(lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
         x.split('.')[0] if '.' in x else (x.split(' ')[0] if ' ' in x else x)))
     adhs = list(set(df.ID.tolist()))
     df_any_adh = pd.DataFrame({'ID': adhs})
     df_any_adh['Any_adh'] = 1
     return df_any_adh
-
-
-def inmembrane(inmembrane_fh):
-    df = pd.read_csv(inmembrane_fh, names=['Name', 'Prediction', 'Length',
-                                           'results', 'description'])
-    cellwall_df = df[df['Prediction'] == 'PSE-Cellwall']
-    cellwall_df['cellwall'] = 1
-    cellwall_df['ID'] = cellwall_df['Name'].apply(
-        lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
-            x.split('.')[0] if '.' in x else (
-                x.split(' ')[0] if ' ' in x else x)))
-    PSE_df = cellwall_df[['ID', 'cellwall']]
-    return PSE_df
 
 
 def iupred(fh_in):
@@ -156,7 +144,6 @@ if __name__ == '__main__':
     parser.add_argument('--anchor_fh', required=True)
     parser.add_argument('--stalk_fh', required=True)
     parser.add_argument('--adh_fh', required=True)
-    parser.add_argument('--pse_fh', required=True)
     parser.add_argument('--iupred_fh', required=True)
     parser.add_argument('--hydro_charge_fh', required=True)
     parser.add_argument('--aa_comp_fh', required=True)
@@ -171,14 +158,13 @@ if __name__ == '__main__':
     continuous_stalks = any_stalk(args.stalk_fh)
     fh_seq.close()
     any_adhs = any_adh(args.adh_fh)
-    PSE = inmembrane(args.pse_fh)
     iupred = iupred(args.iupred_fh)
     hydro_charge = charge_hydro(args.hydro_charge_fh)
     aa_composition = aa_comp(args.aa_comp_fh)
     df_all = length.merge(treks, how='left').merge(
         any_anchor_df, how='left').merge(continuous_stalks, how='left').merge(
-            any_adhs, how='left').merge(PSE, how='left').merge(
-                iupred, how='left').merge(hydro_charge, how='left').merge(
+            any_adhs, how='left').merge(iupred, how='left').merge(
+                hydro_charge, how='left').merge(
                     aa_composition, how='left').drop_duplicates()
     df_all = df_all.fillna(0)
     df_all.to_csv(args.out_fh, index=False)
