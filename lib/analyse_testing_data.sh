@@ -5,7 +5,7 @@ analysis_folder=$2
 results_folder=$3
 jobname=$4
 treks=$5
-iupred=$9
+iupred=$6
 
 main(){
     hmmersearch
