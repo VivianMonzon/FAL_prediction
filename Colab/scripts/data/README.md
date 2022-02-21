@@ -1,0 +1,1 @@
+Please only upload **long_histogram** and **iupred2_long_energy_matrix** manually from the IUPRED2 downloaded script. 
