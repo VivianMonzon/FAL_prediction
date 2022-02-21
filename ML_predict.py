@@ -21,15 +21,6 @@ def main():
     FA_prediction.add_argument('--treks_dir', required=True,
                                help='path to folder containing T-REKS tool. ' 
                                'Example: /Users/vmonzon/Downloads')
-    FA_prediction.add_argument('--lipop_dir', required=True,
-                               help='path to folder containing LipoP tool.'
-                               'Example: /Users/vmonzon/Downloads/software/LipoP1.0a')
-    FA_prediction.add_argument('--signalp_dir', required=True,
-                               help='path to folder containing SignalP tool. '
-                               'Example: /Users/vmonzon/Downloads/software/signalp-5.0/bin')
-    FA_prediction.add_argument('--tmhmm_dir', required=True,
-                               help='path to folder containing TMHMM tool. '
-                               'Example: /Users/vmonzon/Downloads/software/tmhmm-2.0c/bin')
     FA_prediction.add_argument('--iupred_dir', required=True,
                                help='path to folder containing iupred2a.py file'
                                'and corresponding data folder. Example: '
