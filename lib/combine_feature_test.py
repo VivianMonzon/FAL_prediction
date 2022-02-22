@@ -4,7 +4,7 @@ from io import StringIO
 from combine_feature import (get_length, treks, anchor_search)
 
 
-class TestHydroCharge(unittest.TestCase):
+class TestCombine(unittest.TestCase):
 
     def test_length(self):
         written_fasta = StringIO(

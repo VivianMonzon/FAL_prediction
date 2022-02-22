@@ -4,7 +4,7 @@ from io import StringIO
 from amino_acid_comp import (relative_entropy, amino_acid_comp)
 
 
-class TestHydroCharge(unittest.TestCase):
+class TestAminoAcid(unittest.TestCase):
     def setUp(self):
         """Testing different headers (written_fasta 1-3),
         files with just one protein (written_fasta4), 
