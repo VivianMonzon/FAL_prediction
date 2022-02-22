@@ -41,8 +41,8 @@ class TestIupredAdapt(unittest.TestCase):
                             index=[0])
         pd.testing.assert_frame_equal(iupred(written_fasta1),
                                       res1)
-        res2 = pd.DataFrame([['V6M7M2', 66.67],
-                             ['V6M7M1', 0.0]],
+        res2 = pd.DataFrame([['V6M7M1', 0.0],
+                             ['V6M7M2', 66.67]],
                             columns=['ID', 'frac_disordered'],
                             index=[0, 1])
         pd.testing.assert_frame_equal(iupred(written_fasta2),
