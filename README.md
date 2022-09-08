@@ -1,5 +1,5 @@
 # Discovery of bacterial Fibrillar Adhesins-like (FA-like) proteins
-This repository contains a snakemake pipeline to predict FA-like proteins in Gram positive bacteria using a RandomForest classification approach.
+This repository comprises a random forest classification approach for the prediction of FA-like proteins in Gram positive bacteria.
 Fibrillar adhesins are bacterial surface proteins, which play an important role in the bacterial pathogenesis [[1]](#1). The proteins of this novel defined protein class can bind
 to proteins, carbohydrates or even ice crystalls and can enable the colonization of host cells. <br/>
 ## Requirements
