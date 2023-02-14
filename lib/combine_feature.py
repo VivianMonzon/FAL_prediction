@@ -7,12 +7,12 @@ import argparse
 def get_length(fh_in):
     id_len_dict = {}
     for name, seq in SimpleFastaParser(fh_in):
+        if ' ' in name:
+            name = name.split(' ')[0]    
         if '|' in name:
             name = name.split('|')[1].split('|')[0]
         if '.' in name:
             name = name.split('.')[0]
-        if ' ' in name:
-            name = name.split(' ')[0]
         length = len(seq)
         id_len_dict[name] = length
     df_id_len = pd.DataFrame(id_len_dict.items(), columns=['ID', 'length'])
@@ -38,10 +38,10 @@ hmmsearch_cols = ['ID', 'tlen', 'qname', 'acc', 'qlen', 'Evalue', 'score', 'bias
 def anchor_search(fh_seq, hmm_anchor):
     LPxTGs = []
     for name, seq in SimpleFastaParser(fh_seq):
-        if '|' in name:
-            name = name.split('|')[1].split('|')[0]
         if ' ' in name:
             name = name.split(' ')[0]
+        if '|' in name:
+            name = name.split('|')[1].split('|')[0]
         if '.' in name:
             name = name.split('.')[0]
         seq1 = seq[-50:]
@@ -93,7 +93,6 @@ def any_stalk(fh_in):
 
 def any_adh(fh_in):
     df = pd.read_csv(fh_in, sep='\t', names=hmmsearch_cols)
-    print(df.head())
     df['ID'] = df['ID'].apply(lambda x: x.split('|')[1].split('|')[0] if '|' in x else (
         x.split('.')[0] if '.' in x else (x.split(' ')[0] if ' ' in x else x)))
     adhs = list(set(df.ID.tolist()))

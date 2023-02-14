@@ -33,14 +33,15 @@ def read_seq_summ_results(fh_input):
     hydro_portion = []
     charge_proportion = []
     for name, seq in SimpleFastaParser(fh_input):
+        if ' ' in name:
+            name = name.split(' ')[0]
         if '|' in name:
             name = name.split('|')[1].split('|')[0]
         if '.' in name:
             name = name.split('.')[0]
-        if ' ' in name:
-            name = name.split(' ')[0]
         if name in ids:
-            raise ValueError('File contains proteins with same ID!')
+            print('Warning: File contains proteins with same ID!')
+            # raise ValueError('File contains proteins with same ID!')
         if name == '':
             raise ValueError('Header couldnot select ID!')
         ids.append(name)

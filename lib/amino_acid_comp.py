@@ -14,10 +14,10 @@ def relative_entropy(fasta_file):
     """
     dict_id_diverg = {}
     for name, seq in SimpleFastaParser(fasta_file):
-        if '|' in name:
-            name = name.split('|')[1].split('|')[0]
         if ' ' in name:
             name = name.split(' ')[0]
+        if '|' in name:
+            name = name.split('|')[1].split('|')[0]
         if '.' in name:
             name = name.split('.')[0]
         if name == '':
@@ -44,10 +44,10 @@ def amino_acid_comp(fh_fasta):
     columns = ['ID'] + amino_acids
     df_all = pd.DataFrame(columns=columns, dtype=object)
     for name, seq in SimpleFastaParser(fh_fasta):
-        if '|' in name:
-            name = name.split('|')[1].split('|')[0]
         if ' ' in name:
             name = name.split(' ')[0]
+        if '|' in name:
+            name = name.split('|')[1].split('|')[0]
         if '.' in name:
             name = name.split('.')[0]
         if name == '':
